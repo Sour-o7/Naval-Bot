@@ -17,9 +17,9 @@ class Reports(commands.GroupCog):
             # Send Messages
             embed = discord.Embed(timestamp=datetime.now(timezone('US/Eastern')), colour=0x001183, description=f"**Reporter:** {ctx.author.display_name}\n**Offender:** {offender}\n**Reason:**   {reason}")
             await ctx.send(content=f"Thank you {ctx.author.mention}, your report has been sent in!", embed=embed)
-            await client.get_channel(527291868850159637).send(content=f"<@&520397357368737792> A report has been sent in!", embed=embed)
+            await self.client.get_channel(527291868850159637).send(content=f"<@&520397357368737792> A report has been sent in!", embed=embed)
         else:
-            await ctx.send("Use the correct channel!", hidden=True)
+            await ctx.send("Use the correct channel!", ephemeral=True)
 
 # Setup Function          
 async def setup(client: commands.Bot) -> None:
