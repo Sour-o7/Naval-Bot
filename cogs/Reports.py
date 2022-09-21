@@ -5,7 +5,7 @@ from pytz import timezone
 from datetime import datetime
 import discord
 
-class Reports(commands.GroupCog):
+class Reports(commands.Cog):
     def __init__(self, client) -> None:
         self.client = client
         super().__init__()
