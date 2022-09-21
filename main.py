@@ -6,16 +6,17 @@ import os
 import threading
 
 #Naval Version 2.0.0
-#9/20/2022
+#9/21/2022
 activity = discord.Activity(type=discord.ActivityType.playing, name="ZephyrRP")
 client = commands.Bot(command_prefix="++", intents=discord.Intents.all(), activity = activity)
 
 @client.event
 async def on_ready():
     print("Online")
-    
     # Load cogs
+    print("Loading Cogs...")
     for f in os.listdir("./cogs"):
         if f.endswith(".py"):
             await client.load_extension("cogs." + f[:-3])
+            print(f"Loaded {f[:-3]}")
 client.run('TOKEN')
