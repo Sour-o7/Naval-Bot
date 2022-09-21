@@ -74,7 +74,7 @@ class LogTime(commands.GroupCog):
         await ctx.defer()
         # If channel is not 66th timesheets
         if ctx.channel.name != "66th-timesheets":
-            await ctx.send("Please use the command in the proper channel", hidden=True)
+            await ctx.send("Please use the command in the proper channel", ephemeral=True)
             return
         # Send Message
         message = await ctx.send(f"<@{ctx.author.id}> - {hours} hours and {minutes} minutes")
@@ -92,7 +92,7 @@ class LogTime(commands.GroupCog):
         await ctx.defer()
         # If channel is not 1st-timesheets
         if ctx.channel.name != "1st-timesheets":
-            await ctx.send("Please use the command in the proper channel", hidden = True)
+            await ctx.send("Please use the command in the proper channel", ephemeral = True)
             return
         # Send Message
         message = await ctx.send(f"<@{ctx.author.id}> - {hours} hours and {minutes} minutes")
