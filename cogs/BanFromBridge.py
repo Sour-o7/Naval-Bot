@@ -6,7 +6,7 @@ from pytz import timezone
 from datetime import datetime, timedelta
 import asyncio
 
-class BanFromBridge(commands.GroupCog):
+class BanFromBridge(commands.Cog):
     def __init__(self, client) -> None:
         self.client = client
         super().__init__()
