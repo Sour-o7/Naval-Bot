@@ -9,7 +9,7 @@ import discord
 import os.path
 import os
 
-class LogTime(commands.GroupCog):
+class LogTime(commands.Cog):
     def __init__(self, client) -> None:
         self.client = client
         super().__init__()
