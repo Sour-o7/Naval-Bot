@@ -18,4 +18,4 @@ async def on_ready():
     for f in os.listdir("./cogs"):
         if f.endswith(".py"):
             await client.load_extension("cogs." + f[:-3])
-client.run('ODQ5MTMzODIwOTQ2OTM5OTc0.YLWvfw.SlPvoOPHhilB64uJJzrJqMm597s')
+client.run('TOKEN')
