@@ -18,7 +18,7 @@ class BlackListCheck(commands.GroupCog):
         credentials = service_account.Credentials.from_service_account_file(tokens, scopes = scopes)
         self.service = discovery.build('sheets', 'v4', credentials = credentials)
         
-    async def fetch_blacklists():
+    async def fetch_blacklists(self):
         spreadsheet_id = '11Dg2XJ6V9B1Vct3tAiy5Cak6Hdt0pn1RWpcDcrGhqmI'
         
         # Get Non-Revoked Naval Blacklists
@@ -39,7 +39,7 @@ class BlackListCheck(commands.GroupCog):
         return output
 
     @commands.Cog.listener()
-    async def on_message(message):
+    async def on_message(self, message):
         # If sent message is from a bot
         if message.author.bot:
             return
