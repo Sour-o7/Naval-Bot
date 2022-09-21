@@ -8,7 +8,7 @@ import os.path
 import os
 import re
 
-class BlackListCheck(commands.GroupCog):
+class BlackListCheck(commands.Cog):
     def __init__(self, client) -> None:
         self.client = client
         super().__init__()
