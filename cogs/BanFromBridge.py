@@ -19,12 +19,13 @@ class BanFromBridge(commands.GroupCog):
         ]
         
         # Create loop
-        client.loop.create_task(self.periodic())
+        self.client.loop.create_task(self.periodic())
 
     async def periodic(self):
         while True:
             # Loop through current_bans
             for x in self.current_bans:
+                print(x)
                 now = datetime.now(timezone('US/Eastern'))
                 # If ban is expired
                 if x[1] < int(now.timestamp()):
@@ -32,7 +33,7 @@ class BanFromBridge(commands.GroupCog):
                     current_bans.remove(x)
                     # Delete message
                     try:
-                        channel = client.get_channel(907360244756279336)
+                        channel = self.client.get_channel(907360244756279336)
                         message = await channel.fetch_message(x[0])
                         await message.delete()
                     except:
@@ -56,9 +57,9 @@ class BanFromBridge(commands.GroupCog):
                 # If hours is not 0 and ban time is 1 week or less
                 if hours != 0 and hours <= 168:
                     # Send messages
-                    time_est = datetime.now(timezone('US/Eastern'))+timedelta(hours = hours)
+                    time_est = datetime.now(timezone('US/Eastern')) + timedelta(hours = hours)
                     await ctx.send(f"<@{ctx.author.id}> has issued a ban on {member} from entering bridge for {hours} hours. Reason Provided: {reason}\n{member} will be eligible for bridge entry on {time_est.strftime('%m/%d/%Y at %I:%M%p EST')}")
-                    message = await client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: {time_est.strftime("%m/%d/%Y at %I:%M%p EST")} `{int(time_est.timestamp())}`')
+                    message = await self.client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: {time_est.strftime("%m/%d/%Y at %I:%M%p EST")} `{int(time_est.timestamp())}`')
                     # Sleep for ban time
                     await asyncio.sleep(hours*3600)
                     # Delete Message
@@ -68,18 +69,18 @@ class BanFromBridge(commands.GroupCog):
                         pass
                 elif hours > 168:
                     # Send Messages
-                    time_est = datetime.now(timezone('US/Eastern'))+timedelta(hours = hours)
+                    time_est = datetime.now(timezone('US/Eastern')) + timedelta(hours = hours)
                     await ctx.send(f"<@{ctx.author.id}> has issued a ban on {member} from entering bridge for {hours} hours. Reason Provided: {reason}\n{member} will be eligible for bridge entry on {time_est.strftime('%m/%d/%Y at %I:%M%p EST')}")
-                    message = await client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: {time_est.strftime("%m/%d/%Y at %I:%M%p EST")} `{int(time_est.timestamp())}`')
+                    message = await self.client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: {time_est.strftime("%m/%d/%Y at %I:%M%p EST")} `{int(time_est.timestamp())}`')
                     # Add Message to current_bans
                     self.current_bans.append([message.id, int(time_est.timestamp())])
                 else:
                     await ctx.send(f"<@{ctx.author.id}> has issued a ban on {member} from entering bridge indefinitely. Reason Provided: {reason}")
-                    await client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: `Never`')
+                    await self.client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: `Never`')
             else:
-                await ctx.send('You do not have permission to use this command!', hidden=True)
+                await ctx.send('You do not have permission to use this command!', ephemeral=True)
         else:
-            await ctx.send('Please use this in the proper channel', hidden = True)
+            await ctx.send('Please use this in the proper channel', ephemeral = True)
 
 # Setup Function          
 async def setup(client: commands.Bot) -> None:
