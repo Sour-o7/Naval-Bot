@@ -15,7 +15,7 @@ class BanFromBridge(commands.Cog):
         self.current_bans = []
         self.permissions = [
             ["Chief Warrant Officer", "Lieutenant", "Captain", "Deputy Chief", "Chief", "Deputy Director of Naval", "Naval Director"], # Ban up to 168 Hours
-            ["Deputy Chief", "Chief", "Deputy Director", "Director"] # No ban limit
+            ["Deputy Chief", "Chief", "Deputy Director of Naval", "Naval Director"] # No ban limit
         ]
         
         # Create loop
