@@ -14,7 +14,7 @@ class BanFromBridge(commands.Cog):
         # Variables for methods
         self.current_bans = []
         self.permissions = [
-            ["Chief Warrant Officer", "Lieutenant", "Captain", "Deputy Chief", "Chief", "Deputy Director", "Director"], # Ban up to 168 Hours
+            ["Chief Warrant Officer", "Lieutenant", "Captain", "Deputy Chief", "Chief", "Deputy Director of Naval", "Naval Director"], # Ban up to 168 Hours
             ["Deputy Chief", "Chief", "Deputy Director", "Director"] # No ban limit
         ]
         
@@ -25,12 +25,11 @@ class BanFromBridge(commands.Cog):
         while True:
             # Loop through current_bans
             for x in self.current_bans:
-                print(x)
                 now = datetime.now(timezone('US/Eastern'))
                 # If ban is expired
                 if x[1] < int(now.timestamp()):
                     # Remove x from current_bans
-                    current_bans.remove(x)
+                    self.current_bans.remove(x)
                     # Delete message
                     try:
                         channel = self.client.get_channel(907360244756279336)
@@ -49,31 +48,28 @@ class BanFromBridge(commands.Cog):
             if not "Probationary Naval Guard" in member_roles and "Naval Guard" in member_roles:
                 # Extend response timeframe
                 await ctx.defer()
-                # Cap hours at 168 for CWO+, 24 for NG-SWO
-                if (hours == 0 or hours >= 168) and not any(x in self.permissions[1] for x in member_roles):
+                
+                # If the member is requesting a time above the allowed time
+                if (hours == 0 or hours > 168) and not any(x in self.permissions[1] for x in member_roles):
                     hours = 168
-                if hours >= 24 and not any(x in self.permissions[0] for x in member_roles):
+                
+                if (hours > 24 or hours > 168) and not any (x in self.permissions[0] for x in member_roles):
                     hours = 24
-                # If hours is not 0 and ban time is 1 week or less
-                if hours != 0 and hours <= 168:
-                    # Send messages
+
+                if hours != 0:
+
+                    # Get ending timestamp
                     time_est = datetime.now(timezone('US/Eastern')) + timedelta(hours = hours)
+                    
+                    # Send confirmation message
                     await ctx.send(f"<@{ctx.author.id}> has issued a ban on {member} from entering bridge for {hours} hours. Reason Provided: {reason}\n{member} will be eligible for bridge entry on {time_est.strftime('%m/%d/%Y at %I:%M%p EST')}")
+
+                    # Send ban log
                     message = await self.client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: {time_est.strftime("%m/%d/%Y at %I:%M%p EST")} `{int(time_est.timestamp())}`')
-                    # Sleep for ban time
-                    await asyncio.sleep(hours*3600)
-                    # Delete Message
-                    try:
-                        await message.delete()
-                    except:
-                        pass
-                elif hours > 168:
-                    # Send Messages
-                    time_est = datetime.now(timezone('US/Eastern')) + timedelta(hours = hours)
-                    await ctx.send(f"<@{ctx.author.id}> has issued a ban on {member} from entering bridge for {hours} hours. Reason Provided: {reason}\n{member} will be eligible for bridge entry on {time_est.strftime('%m/%d/%Y at %I:%M%p EST')}")
-                    message = await self.client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: {time_est.strftime("%m/%d/%Y at %I:%M%p EST")} `{int(time_est.timestamp())}`')
+
                     # Add Message to current_bans
                     self.current_bans.append([message.id, int(time_est.timestamp())])
+
                 else:
                     await ctx.send(f"<@{ctx.author.id}> has issued a ban on {member} from entering bridge indefinitely. Reason Provided: {reason}")
                     await self.client.get_channel(907360244756279336).send(f'{member} - Reason: {reason} - Expires: `Never`')
@@ -82,7 +78,7 @@ class BanFromBridge(commands.Cog):
         else:
             await ctx.send('Please use this in the proper channel', ephemeral = True)
 
-# Setup Function          
+# Setup Function
 async def setup(client: commands.Bot) -> None:
     cog_instance = BanFromBridge(client)
     await client.add_cog(cog_instance)
@@ -90,5 +86,8 @@ async def setup(client: commands.Bot) -> None:
     # Fetch all bridge bans after restart
     async for message in client.get_channel(907360244756279336).history(limit=None):
         if not message.content.endswith('`Never`'):
-            ending_timestamp = message.content.split('`')
-            cog_instance.current_bans.append([message.id, int(ending_timestamp[-2])])
+            try:
+                ending_timestamp = message.content.split('`')
+                cog_instance.current_bans.append([message.id, int(ending_timestamp[-2])])
+            except Exception:
+                pass
