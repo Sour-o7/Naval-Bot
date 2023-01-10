@@ -13,12 +13,14 @@ class LogTime(commands.Cog):
     def __init__(self, client) -> None:
         self.client = client
         super().__init__()
+        self.initiateService()
         
+    def initiateService(self):
         scopes = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/spreadsheets"]
         tokens = os.path.join(os.getcwd(), 'naval_keys.json')
         credentials = service_account.Credentials.from_service_account_file(tokens, scopes=scopes)
         self.service = discovery.build('sheets', 'v4', credentials=credentials)
-
+    
     # Add a and b using HH:MM Format
     async def maths_handler(self, a, b):
         timeList = [a, b]
@@ -78,14 +80,23 @@ class LogTime(commands.Cog):
             return
         # Send Message
         message = await ctx.send(f"<@{ctx.author.id}> - {hours} hours and {minutes} minutes")
-        # Update time and react to message
-        try:
-            await self.update_time_66th(ctx.author.id, f"{hours}:{minutes}")
-            await message.add_reaction('<ImperialApprovedStamp:503286393674661891>')
-        except Exception as e:
-            print(e)
-            await ctx.channel.send(f"<@295644243945586688> {e}")
-            
+
+        # Update time and react
+        while(True):
+            try: # Try to update roster and add reaction
+                await self.update_time_66th(ctx.author.id, f"{hours}:{minutes}")
+                await message.add_reaction('<ImperialApprovedStamp:503286393674661891>')
+                break
+            except ConnectionResetError as ce:
+                print(ce)
+                print("Refreshing")
+                self.initiateService() # Refresh Connection to Google API
+                pass
+            except Exception as e:
+                print(type(e))
+                await ctx.channel.send(f"<@295644243945586688> {e}")
+                break
+
     @commands.hybrid_command(name="time1st")
     async def time_1st(self, ctx: commands.Context, hours: int = 0, minutes: int = 0):
         # Extend reponse TimeFrame
@@ -96,13 +107,22 @@ class LogTime(commands.Cog):
             return
         # Send Message
         message = await ctx.send(f"<@{ctx.author.id}> - {hours} hours and {minutes} minutes")
+        
         # Update time and react
-        try:
-            await self.update_time_1st(ctx.author.id, f"{hours}:{minutes}")
-            await message.add_reaction('<ImperialApprovedStamp:503286393674661891>')
-        except Exception as e:
-            print(e)
-            await ctx.channel.send(f"<@295644243945586688> {e}")
+        while(True):
+            try: # Try to update roster and add reaction
+                await self.update_time_1st(ctx.author.id, f"{hours}:{minutes}")
+                await message.add_reaction('<ImperialApprovedStamp:503286393674661891>')
+                break
+            except ConnectionResetError as ce:
+                print(ce)
+                print("Refreshing")
+                self.initiateService() # Refresh Connection to Google API
+                pass
+            except Exception as e:
+                print(type(e))
+                await ctx.channel.send(f"<@295644243945586688> {e}")
+                break
 
 # Setup Function          
 async def setup(client: commands.Bot) -> None:
